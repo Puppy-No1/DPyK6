@@ -23,7 +23,7 @@
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: linear-gradient(135deg, #0A84FF, #5E5CE6); color: white; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: #ccc; }
-        /* Tùy chỉnh nút Zalo để con trỏ chuột không hiển thị dạng click được */
+        /* Nút Zalo Tĩnh */
         .btn-static { background: rgba(255,255,255,0.1); color: #ccc; cursor: default; } 
         .btn-link4m { background: #fff; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; }
         
@@ -96,7 +96,7 @@
         <input type="text" id="inputKey" placeholder="Dán Key Vào Đây Để Kích Hoạt...">
         <button class="btn btn-primary" onclick="checkKey()">KÍCH HOẠT NGAY</button>
         
-        <button class="btn btn-static">💬 Liên Hệ Zalo Để Lấy Key VIP: 0901323149</button>
+        <button class="btn btn-static">💬 Liên Hệ Zalo: 0901323149</button>
     </div>
 
     <div class="card hidden" id="contentBox">
@@ -185,7 +185,7 @@
             setTimeout(hidePopup, 1000);
         }
 
-        // --- CHECK KEY (HIỆN BẢNG BÁO LỖI) ---
+        // --- CHECK KEY ---
         function checkKey() {
             let userKey = document.getElementById('inputKey').value.trim();
             if(!userKey) return showPopup(false, "Vui Lòng Nhập Key!");
@@ -202,7 +202,6 @@
 
                 let generatedSignature = btoa(stringToHash).substr(0, 15);
                 
-                // NẾU SAI -> GỌI HÀM HIỆN BẢNG LỖI
                 if (signatureInKey !== generatedSignature) {
                     let msg = `[ID MÁY CỦA BẠN]:\n${currentDeviceID}\n\n`;
                     msg += `[KEY NÀY DÀNH CHO]:\n${parts.length === 3 ? parts[2] : "Một ID Khác"}\n\n`;
@@ -252,7 +251,7 @@
             if (isOn) {
                 switchLabel.classList.add('loading');
                 statusText.innerHTML = '<span class="spinner"></span> Đang xử lý...';
-                if (id === 1) runConsoleEffect("FIX LAG", ["Cleaning Android Cache...", "Clearing Dalvik Cache...", "Optimizing Snapdragon/Exynos...", "FPS Unlocked: 60"], checkbox, id);
+                if (id === 1) runConsoleEffect("FIX LAG", ["Cleaning Android Cache...", "Clearing Dalvik Cache...", "Optimizing Snapdragon/Exynos...", "FPS Unlocked: 90/120"], checkbox, id);
                 if (id === 2) runConsoleEffect("NET BOOST", ["Pinging Google Server...", "DNS Changed: 8.8.8.8", "Reducing Packet Loss...", "Connection Stable: OK"], checkbox, id);
                 if (id === 3) runConsoleEffect("SENSITIVITY", ["Optimizing TouchScreen...", "Reducing Input Lag...", "Calibration: +80%", "Response Time: 0.1ms"], checkbox, id);
                 if (id === 4) runConsoleEffect("AIM ASSIST", ["Injecting AimModule...", "Bypassing Anti-Cheat...", "Headshot Rate: +90%", "Lock Target: Active"], checkbox, id);
@@ -282,19 +281,24 @@
         function showGameModal() { document.getElementById('gameModal').classList.add('show'); }
         function closeGameModal() { document.getElementById('gameModal').classList.remove('show'); }
         
+        // --- HÀM MỞ LINK AN TOÀN (TRÁNH LỖI TRẮNG APP) ---
         function forceOpenUrl(url) {
             let a = document.createElement('a');
             a.href = url;
-            a.target = "_blank"; // Quan trọng: Mở tab mới để không mất App
+            a.target = "_blank"; // Mở tab mới
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
         }
 
+        // --- SỬA LẠI LINK MỞ GAME (TRỰC TIẾP) ---
         function openGame(type) {
             let intentUrl;
-            if (type === 'normal') intentUrl = "intent://#Intent;scheme=freefireth;package=com.dts.freefireth;end";
-            else intentUrl = "intent://#Intent;scheme=freefiremax;package=com.dts.freefiremax;end";
+            if (type === 'normal') {
+                intentUrl = "freefireth://";
+            } else {
+                intentUrl = "freefiremax://";
+            }
             forceOpenUrl(intentUrl); 
             closeGameModal();
         }
