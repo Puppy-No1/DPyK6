@@ -5,28 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DPyK6 🤖</title>
     <style>
-        /* --- GIAO DIỆN GIỮ NGUYÊN --- */
+        /* --- GIAO DIỆN CHÍNH --- */
         body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center; overflow: hidden; }
         .overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(15px); z-index:1; }
         .card { position: relative; z-index: 2; width: 85%; max-width: 380px; background: rgba(30,30,30,0.95); border-radius: 20px; padding: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); animation: fadeIn 0.5s ease; max-height: 90vh; overflow-y: auto; }
         .card::-webkit-scrollbar { display: none; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
         .device-box { background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 10px; margin: 15px 0; border: 1px dashed #555; cursor: pointer; transition: 0.2s; }
         .device-box:active { background: rgba(255,255,255,0.2); }
         .device-id { font-family: monospace; font-size: 18px; color: #0f0; font-weight: bold; letter-spacing: 1px; word-break: break-all;}
+        
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #444; background: #222; color: #fff; text-align: center; font-size: 16px; margin-bottom: 15px; outline: none; box-sizing: border-box; }
         input:focus { border-color: #0A84FF; }
+        
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; display: block; text-decoration: none; box-sizing: border-box; margin-bottom: 10px; transition: transform 0.1s; }
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: linear-gradient(135deg, #0A84FF, #5E5CE6); color: white; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: #ccc; }
+        /* Tùy chỉnh nút Zalo để con trỏ chuột không hiển thị dạng click được */
         .btn-static { background: rgba(255,255,255,0.1); color: #ccc; cursor: default; } 
-        .btn-link4m { background: #fff; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        
+        /* Đã xóa style btn-link4m vì không dùng nữa */
+        
         .func-list { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
         .func-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
         .func-info { text-align: left; }
         .func-name { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 3px; display: block; }
         .func-status { font-size: 11px; color: #666; }
+        
         .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #3a3a3a; transition: .4s; border-radius: 34px; }
@@ -34,23 +41,32 @@
         input:checked + .slider { background-color: #30D158; }
         input:checked + .slider:before { transform: translateX(22px); }
         .switch.loading { opacity: 0.6; pointer-events: none; }
+        
         .btn-game { background: linear-gradient(135deg, #00C6FF, #0072FF); color: white; margin-top: 15px; }
+        
+        /* POPUP & MODAL */
         .status-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(20, 20, 20, 0.98); padding: 25px 40px; border-radius: 15px; z-index: 9999; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; transition: 0.3s; min-width: 280px; border: 1px solid rgba(255,255,255,0.1); }
         .status-popup.show { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
         .status-icon { font-size: 40px; margin-bottom: 10px; display: block; }
-        .status-text { font-size: 16px; font-weight: bold; display: block; }
+        .status-text { font-size: 16px; font-weight: bold; display: block; white-space: pre-line; /* Hỗ trợ xuống dòng */ }
         .success-mode { border-color: #30D158; } .success-mode .status-icon, .success-mode .status-text { color: #30D158; }
         .error-mode { border-color: #FF453A; } .error-mode .status-icon, .error-mode .status-text { color: #FF453A; }
+        
         .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
         .modal.show { opacity: 1; visibility: visible; }
         .modal-content { background: #1c1c1e; padding: 25px; border-radius: 20px; width: 80%; text-align: center; }
+        
         .hidden { display: none !important; }
         .timer { font-family: monospace; color: #FFD60A; font-weight: bold; margin-top: 5px; }
         .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-right: 5px; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* BẢNG CONSOLE */
         #consoleModal .modal-content { background: #000; border: 1px solid #00FF00; text-align: left; font-family: 'Courier New', monospace; padding: 15px; height: 300px; overflow-y: auto; display: flex; flex-direction: column; justify-content: flex-start; }
         .console-line { color: #00FF00; font-size: 12px; margin-bottom: 5px; opacity: 0; animation: fadeInText 0.1s forwards; }
         @keyframes fadeInText { to { opacity: 1; } }
+
+        /* --- BẢNG BÁO LỖI --- */
         #errorModal .modal-content { border: 1px solid #FF453A; }
         .error-title { color: #FF453A; font-size: 20px; font-weight: bold; margin-bottom: 15px; display: block; text-transform: uppercase; }
         .error-msg { text-align: left; background: rgba(255, 69, 58, 0.1); padding: 15px; border-radius: 10px; color: #ff9a9a; font-size: 13px; line-height: 1.6; font-family: monospace; }
@@ -67,10 +83,6 @@
     <div class="card" id="loginBox">
         <h2 style="color:#fff; margin-top:0;">Nhập Key Để Sử Dụng ❗️</h2>
         
-        <button onclick="openLink4M()" class="btn btn-link4m">
-            🔑 <b>Lấy Key Miễn Phí</b>
-        </button>
-
         <p style="color:#aaa; font-size:13px; margin-bottom:5px;">Sao Chép Mã Bên Dưới Gửi Cho 𝐏𝐲𝐊𝟔 🧸 Để Nhận Key VIP:</p>
 
         <div class="device-box" onclick="copyDeviceID()">
@@ -81,7 +93,7 @@
         <input type="text" id="inputKey" placeholder="Dán Key Vào Đây Để Kích Hoạt...">
         <button class="btn btn-primary" onclick="checkKey()">KÍCH HOẠT NGAY</button>
         
-        <button class="btn btn-static">💬 Liên Hệ Zalo: 0901323149</button>
+        <button class="btn btn-static">💬 Liên Hệ Zalo Để Lấy Key VIP: 0901323149</button>
     </div>
 
     <div class="card hidden" id="contentBox">
@@ -113,7 +125,8 @@
             </div>
         </div>
 
-        <button class="btn btn-game" onclick="showGameModal()">🎮 MỞ GAME FREE FIRE</button>
+        <button class="btn btn-game" onclick="activateGame()">🚀 KÍCH HOẠT</button>
+        
         <button class="btn btn-secondary" onclick="showLogoutModal()" style="margin-top:10px;">Đăng Xuất</button>
     </div>
 
@@ -142,7 +155,8 @@
     <div class="modal" id="errorModal">
         <div class="modal-content">
             <span class="error-title">❌ KEY SAI!</span>
-            <div class="error-msg" id="errorMsgContent"></div>
+            <div class="error-msg" id="errorMsgContent">
+                </div>
             <button class="btn btn-secondary" onclick="closeErrorModal()" style="margin-top:15px; background: rgba(255, 69, 58, 0.2); color: #FF453A;">Đóng</button>
         </div>
     </div>
@@ -169,6 +183,7 @@
             setTimeout(hidePopup, 1000);
         }
 
+        // --- CHECK KEY (HIỆN BẢNG BÁO LỖI) ---
         function checkKey() {
             let userKey = document.getElementById('inputKey').value.trim();
             if(!userKey) return showPopup(false, "Vui Lòng Nhập Key!");
@@ -178,11 +193,14 @@
                 let expiryTimestamp = parseInt(parts[0]);
                 let signatureInKey = parts[1];
                 let stringToHash = "";
+                
                 if (parts.length === 2) stringToHash = currentDeviceID + expiryTimestamp + SECRET_SALT;
                 else if (parts.length === 3) stringToHash = parts[2] + expiryTimestamp + SECRET_SALT;
                 else throw new Error("Format Key Sai");
 
                 let generatedSignature = btoa(stringToHash).substr(0, 15);
+                
+                // NẾU SAI -> GỌI HÀM HIỆN BẢNG LỖI
                 if (signatureInKey !== generatedSignature) {
                     let msg = `[ID MÁY CỦA BẠN]:\n${currentDeviceID}\n\n`;
                     msg += `[KEY NÀY DÀNH CHO]:\n${parts.length === 3 ? parts[2] : "Một ID Khác"}\n\n`;
@@ -190,6 +208,7 @@
                     showErrorModal(msg);
                     return;
                 }
+                
                 let now = new Date().getTime();
                 if (now > expiryTimestamp) { showPopup(false, "Key Đã Hết Hạn!"); return; }
 
@@ -231,10 +250,10 @@
             if (isOn) {
                 switchLabel.classList.add('loading');
                 statusText.innerHTML = '<span class="spinner"></span> Đang xử lý...';
-                if (id === 1) runConsoleEffect("FIX LAG", ["Cleaning Android Cache...", "Clearing Dalvik Cache...", "Optimizing Snapdragon/Exynos...", "FPS Unlocked: 90/120"], checkbox, id);
+                if (id === 1) runConsoleEffect("FIX LAG", ["Cleaning Android Cache...", "Clearing Dalvik Cache...", "Optimizing Snapdragon/Exynos...", "FPS Unlocked: 60"], checkbox, id);
                 if (id === 2) runConsoleEffect("NET BOOST", ["Pinging Google Server...", "DNS Changed: 8.8.8.8", "Reducing Packet Loss...", "Connection Stable: OK"], checkbox, id);
                 if (id === 3) runConsoleEffect("SENSITIVITY", ["Optimizing TouchScreen...", "Reducing Input Lag...", "Calibration: +80%", "Response Time: 0.1ms"], checkbox, id);
-                if (id === 4) runConsoleEffect("AIM ASSIST", ["Injecting AimModule...", "Bypassing Anti-Cheat...", "Headshot Rate: +95%", "Lock Target: Active"], checkbox, id);
+                if (id === 4) runConsoleEffect("AIM ASSIST", ["Injecting AimModule...", "Bypassing Anti-Cheat...", "Headshot Rate: +90%", "Lock Target: Active"], checkbox, id);
             } else {
                 setTimeout(() => { statusText.innerText = 'Đã tắt'; statusText.style.color = '#666'; checkbox.disabled = false; switchLabel.classList.remove('loading'); }, 500);
             }
@@ -258,25 +277,30 @@
             }, 800); 
         }
 
+        // --- HÀM MỚI: KÍCH HOẠT GAME ---
+        function activateGame() {
+            showPopup(true, "Đã kích hoạt thành công\nHãy thoát ra vào game");
+            // Popup này sẽ tự tắt sau 2 giây do code trong showPopup đã có sẵn setTimeout
+        }
+
+        // Các hàm cũ vẫn giữ để không lỗi code nhưng không gọi tới
         function showGameModal() { document.getElementById('gameModal').classList.add('show'); }
         function closeGameModal() { document.getElementById('gameModal').classList.remove('show'); }
         
-        // --- CƠ CHẾ MỞ WEB MẶC ĐỊNH (Link4M) ---
-        function openLink4M() {
-            // Dùng window.open với _system để ép mở trình duyệt ngoài trên Android WebView
-            window.open("https://link4m.com/Lhg88M", "_system");
+        function forceOpenUrl(url) {
+            let a = document.createElement('a');
+            a.href = url;
+            a.target = "_blank"; 
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
-        // --- CƠ CHẾ MỞ GAME MỚI (LAUNCH INTENT) ---
         function openGame(type) {
             let intentUrl;
-            if (type === 'normal') {
-                // Thêm category.LAUNCHER để báo hiệu đây là hành động mở app từ icon
-                intentUrl = "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;component=com.dts.freefireth/com.dts.freefireth.FreeFire;end";
-            } else {
-                intentUrl = "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;component=com.dts.freefiremax/com.dts.freefiremax.FreeFire;end";
-            }
-            window.location.href = intentUrl;
+            if (type === 'normal') intentUrl = "intent://#Intent;scheme=freefireth;package=com.dts.freefireth;end";
+            else intentUrl = "intent://#Intent;scheme=freefiremax;package=com.dts.freefiremax;end";
+            forceOpenUrl(intentUrl); 
             closeGameModal();
         }
 
@@ -284,18 +308,23 @@
         function closeLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
         function confirmLogout() { localStorage.removeItem('savedKey_Android'); location.reload(); }
 
+        // --- XỬ LÝ BẢNG BÁO LỖI ---
         function showErrorModal(msg) {
             document.getElementById('errorMsgContent').innerText = msg;
             document.getElementById('errorModal').classList.add('show');
         }
-        function closeErrorModal() { document.getElementById('errorModal').classList.remove('show'); }
+        function closeErrorModal() {
+            document.getElementById('errorModal').classList.remove('show');
+        }
 
         function showPopup(isSuccess, msg) {
             const m = document.getElementById('statusModal');
             const i = document.getElementById('statusIcon');
             const t = document.getElementById('statusText');
             m.className = "status-popup " + (isSuccess ? "success-mode" : "error-mode");
-            i.innerHTML = isSuccess ? "✅" : "❌"; t.innerText = msg; m.classList.add('show'); setTimeout(() => m.classList.remove('show'), 2000);
+            i.innerHTML = isSuccess ? "✅" : "❌"; t.innerText = msg; m.classList.add('show'); 
+            // Tự tắt sau 2000ms (2 giây)
+            setTimeout(() => m.classList.remove('show'), 2000);
         }
         function hidePopup() { document.getElementById('statusModal').classList.remove('show'); }
 
