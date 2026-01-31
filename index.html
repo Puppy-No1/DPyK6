@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DPyK6 🤖</title>
     <style>
-        /* --- GIAO DIỆN CHÍNH --- */
+        /* --- GIAO DIỆN CHÍNH (GIỮ NGUYÊN) --- */
         body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center; overflow: hidden; }
         .overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(15px); z-index:1; }
         .card { position: relative; z-index: 2; width: 85%; max-width: 380px; background: rgba(30,30,30,0.95); border-radius: 20px; padding: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); animation: fadeIn 0.5s ease; max-height: 90vh; overflow-y: auto; }
@@ -23,8 +23,11 @@
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: linear-gradient(135deg, #0A84FF, #5E5CE6); color: white; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: #ccc; }
-        /* Nút Zalo Tĩnh */
+        
+        /* Nút Tĩnh (Không bấm được) */
         .btn-static { background: rgba(255,255,255,0.1); color: #ccc; cursor: default; } 
+        
+        /* Nút Link4M đặc biệt */
         .btn-link4m { background: #fff; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; }
         
         .func-list { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
@@ -82,9 +85,9 @@
     <div class="card" id="loginBox">
         <h2 style="color:#fff; margin-top:0;">Nhập Key Để Sử Dụng ❗️</h2>
         
-        <a href="https://link4m.com/Lhg88M" target="_blank" class="btn btn-link4m">
+        <button onclick="openLink4M()" class="btn btn-link4m">
             🔑 <b>Lấy Key Miễn Phí</b>
-        </a>
+        </button>
 
         <p style="color:#aaa; font-size:13px; margin-bottom:5px;">Sao Chép Mã Bên Dưới Gửi Cho 𝐏𝐲𝐊𝟔 🧸 Để Nhận Key VIP:</p>
 
@@ -281,16 +284,25 @@
         function showGameModal() { document.getElementById('gameModal').classList.add('show'); }
         function closeGameModal() { document.getElementById('gameModal').classList.remove('show'); }
         
-        // --- XỬ LÝ MỞ GAME TRỰC TIẾP (FIX CHUYỂN STORE) ---
+        // --- HÀM MỞ LINK4M: DÙNG INTENT ĐỂ ÉP MỞ TRÌNH DUYỆT NGOÀI ---
+        function openLink4M() {
+            let link = "https://link4m.com/Lhg88M";
+            // Lệnh này ép Android mở trình duyệt mặc định (Chrome/Samsung)
+            let intentUrl = "intent://link4m.com/Lhg88M#Intent;scheme=https;action=android.intent.action.VIEW;end";
+            window.location.href = intentUrl;
+        }
+
+        // --- HÀM MỞ GAME: DÙNG INTENT ĐỂ ÉP MỞ APP GAME ---
         function openGame(type) {
-            let url = "";
+            let intentUrl;
             if (type === 'normal') {
-                url = "freefireth://";
+                // Ép mở Free Fire Thường
+                intentUrl = "intent://#Intent;action=android.intent.action.VIEW;scheme=freefireth;package=com.dts.freefireth;end";
             } else {
-                url = "freefiremax://";
+                // Ép mở Free Fire MAX
+                intentUrl = "intent://#Intent;action=android.intent.action.VIEW;scheme=freefiremax;package=com.dts.freefiremax;end";
             }
-            // Mở trực tiếp bằng location, KHÔNG mở tab mới
-            window.location.href = url;
+            window.location.href = intentUrl;
             closeGameModal();
         }
 
@@ -298,14 +310,11 @@
         function closeLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
         function confirmLogout() { localStorage.removeItem('savedKey_Android'); location.reload(); }
 
-        // --- XỬ LÝ BẢNG BÁO LỖI ---
         function showErrorModal(msg) {
             document.getElementById('errorMsgContent').innerText = msg;
             document.getElementById('errorModal').classList.add('show');
         }
-        function closeErrorModal() {
-            document.getElementById('errorModal').classList.remove('show');
-        }
+        function closeErrorModal() { document.getElementById('errorModal').classList.remove('show'); }
 
         function showPopup(isSuccess, msg) {
             const m = document.getElementById('statusModal');
