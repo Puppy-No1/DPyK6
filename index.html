@@ -3,29 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>DPyK6 🧸 (Android)</title>
+    <title>DPyK6 🤖</title>
     <style>
-        /* GIỮ NGUYÊN GIAO DIỆN CŨ */
+        /* --- GIAO DIỆN CHÍNH --- */
         body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center; overflow: hidden; }
         .overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(15px); z-index:1; }
         .card { position: relative; z-index: 2; width: 85%; max-width: 380px; background: rgba(30,30,30,0.95); border-radius: 20px; padding: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); animation: fadeIn 0.5s ease; max-height: 90vh; overflow-y: auto; }
         .card::-webkit-scrollbar { display: none; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
         .device-box { background: rgba(255, 255, 255, 0.08); padding: 15px; border-radius: 10px; margin: 15px 0; border: 1px dashed #555; cursor: pointer; transition: 0.2s; }
         .device-box:active { background: rgba(255,255,255,0.2); }
         .device-id { font-family: monospace; font-size: 18px; color: #0f0; font-weight: bold; letter-spacing: 1px; word-break: break-all;}
+        
         input { width: 100%; padding: 15px; border-radius: 12px; border: 1px solid #444; background: #222; color: #fff; text-align: center; font-size: 16px; margin-bottom: 15px; outline: none; box-sizing: border-box; }
         input:focus { border-color: #0A84FF; }
+        
         .btn { width: 100%; padding: 14px; border-radius: 12px; border: none; font-size: 16px; font-weight: bold; cursor: pointer; display: block; text-decoration: none; box-sizing: border-box; margin-bottom: 10px; transition: transform 0.1s; }
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: linear-gradient(135deg, #0A84FF, #5E5CE6); color: white; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: #ccc; }
+        /* Tùy chỉnh nút Zalo để con trỏ chuột không hiển thị dạng click được */
+        .btn-static { background: rgba(255,255,255,0.1); color: #ccc; cursor: default; } 
         .btn-link4m { background: #fff; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; }
+        
         .func-list { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
         .func-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
         .func-info { text-align: left; }
-        .func-name { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 3px; display: block; }
+        .func-name { font-size: 14px; font-weight: 600; color: #fff; margin-bottom: 3px; display: block; }
         .func-status { font-size: 11px; color: #666; }
+        
         .switch { position: relative; display: inline-block; width: 50px; height: 28px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #3a3a3a; transition: .4s; border-radius: 34px; }
@@ -33,20 +40,35 @@
         input:checked + .slider { background-color: #30D158; }
         input:checked + .slider:before { transform: translateX(22px); }
         .switch.loading { opacity: 0.6; pointer-events: none; }
+        
         .btn-game { background: linear-gradient(135deg, #00C6FF, #0072FF); color: white; margin-top: 15px; }
+        
+        /* POPUP & MODAL */
         .status-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(20, 20, 20, 0.98); padding: 25px 40px; border-radius: 15px; z-index: 9999; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; transition: 0.3s; min-width: 280px; border: 1px solid rgba(255,255,255,0.1); }
         .status-popup.show { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
         .status-icon { font-size: 40px; margin-bottom: 10px; display: block; }
         .status-text { font-size: 16px; font-weight: bold; display: block; }
         .success-mode { border-color: #30D158; } .success-mode .status-icon, .success-mode .status-text { color: #30D158; }
         .error-mode { border-color: #FF453A; } .error-mode .status-icon, .error-mode .status-text { color: #FF453A; }
+        
         .modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10; display: flex; flex-direction: column; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: 0.3s; }
         .modal.show { opacity: 1; visibility: visible; }
         .modal-content { background: #1c1c1e; padding: 25px; border-radius: 20px; width: 80%; text-align: center; }
+        
         .hidden { display: none !important; }
         .timer { font-family: monospace; color: #FFD60A; font-weight: bold; margin-top: 5px; }
         .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-right: 5px; vertical-align: middle; }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* BẢNG CONSOLE */
+        #consoleModal .modal-content { background: #000; border: 1px solid #00FF00; text-align: left; font-family: 'Courier New', monospace; padding: 15px; height: 300px; overflow-y: auto; display: flex; flex-direction: column; justify-content: flex-start; }
+        .console-line { color: #00FF00; font-size: 12px; margin-bottom: 5px; opacity: 0; animation: fadeInText 0.1s forwards; }
+        @keyframes fadeInText { to { opacity: 1; } }
+
+        /* --- BẢNG BÁO LỖI --- */
+        #errorModal .modal-content { border: 1px solid #FF453A; }
+        .error-title { color: #FF453A; font-size: 20px; font-weight: bold; margin-bottom: 15px; display: block; text-transform: uppercase; }
+        .error-msg { text-align: left; background: rgba(255, 69, 58, 0.1); padding: 15px; border-radius: 10px; color: #ff9a9a; font-size: 13px; line-height: 1.6; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -73,7 +95,8 @@
 
         <input type="text" id="inputKey" placeholder="Dán Key Vào Đây Để Kích Hoạt...">
         <button class="btn btn-primary" onclick="checkKey()">KÍCH HOẠT NGAY</button>
-        <button class="btn btn-secondary" onclick="window.open('https://zalo.me/0901323149')">Liên Hệ 𝐏𝐲𝐊𝟔 🧸 Zalo: 0901323149</button>
+        
+        <button class="btn btn-static">💬 Liên Hệ Zalo Để Lấy Key VIP: 0901323149</button>
     </div>
 
     <div class="card hidden" id="contentBox">
@@ -96,8 +119,12 @@
                 <label class="switch" id="switch_2"><input type="checkbox" onchange="toggleFunc(this, 2)"><span class="slider"></span></label>
             </div>
             <div class="func-item">
-                <div class="func-info"><span class="func-name">🎯 Hỗ Trợ Kéo Tâm VIP</span><span class="func-status" id="status_3">Đang tắt</span></div>
+                <div class="func-info"><span class="func-name">📱 Tăng Nhạy Màn Hình</span><span class="func-status" id="status_3">Đang tắt</span></div>
                 <label class="switch" id="switch_3"><input type="checkbox" onchange="toggleFunc(this, 3)"><span class="slider"></span></label>
+            </div>
+            <div class="func-item">
+                <div class="func-info"><span class="func-name">🎯 Hỗ Trợ Kéo Tâm VIP</span><span class="func-status" id="status_4">Đang tắt</span></div>
+                <label class="switch" id="switch_4"><input type="checkbox" onchange="toggleFunc(this, 4)"><span class="slider"></span></label>
             </div>
         </div>
 
@@ -113,13 +140,26 @@
             <button class="btn btn-secondary" onclick="closeGameModal()">Đóng</button>
         </div>
     </div>
-
+    
     <div class="modal" id="logoutModal">
         <div class="modal-content">
             <h2 style="color:#FF453A; margin-bottom:10px;">⚠️ Cảnh Báo</h2>
             <p style="color:#ccc; margin-bottom:20px;">Đăng Xuất Sẽ Phải Nhập Lại Key ❗️</p>
             <button class="btn btn-primary" onclick="confirmLogout()" style="background:#FF453A; margin-bottom:10px;">Đồng Ý</button>
             <button class="btn btn-secondary" onclick="closeLogoutModal()">Hủy</button>
+        </div>
+    </div>
+
+    <div class="modal" id="consoleModal">
+        <div class="modal-content" id="consoleContent"></div>
+    </div>
+
+    <div class="modal" id="errorModal">
+        <div class="modal-content">
+            <span class="error-title">❌ KEY SAI!</span>
+            <div class="error-msg" id="errorMsgContent">
+                </div>
+            <button class="btn btn-secondary" onclick="closeErrorModal()" style="margin-top:15px; background: rgba(255, 69, 58, 0.2); color: #FF453A;">Đóng</button>
         </div>
     </div>
 
@@ -130,10 +170,7 @@
             const data = [navigator.platform, navigator.hardwareConcurrency, screen.height, screen.width, screen.colorDepth, Intl.DateTimeFormat().resolvedOptions().timeZone].join("-");
             const msgBuffer = new TextEncoder().encode(data);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            let hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
-            
-            // --- ĐỔI PREFIX THÀNH ADR (ANDROID) ---
-            return "ADR-" + hashHex.substring(0, 8).toUpperCase();
+            return "ADR-" + Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 8).toUpperCase();
         }
 
         let currentDeviceID = "";
@@ -148,52 +185,47 @@
             setTimeout(hidePopup, 1000);
         }
 
+        // --- CHECK KEY (HIỆN BẢNG BÁO LỖI) ---
         function checkKey() {
             let userKey = document.getElementById('inputKey').value.trim();
-            if(!userKey) return;
-
+            if(!userKey) return showPopup(false, "Vui Lòng Nhập Key!");
             try {
                 let decoded = atob(userKey);
                 let parts = decoded.split("|");
+                let expiryTimestamp = parseInt(parts[0]);
+                let signatureInKey = parts[1];
+                let stringToHash = "";
                 
-                if (parts.length === 2) {
-                    let expiryTimestamp = parseInt(parts[0]);
-                    let signature = parts[1];
-                    let rawCheck = currentDeviceID + expiryTimestamp + SECRET_SALT;
-                    let expectedSignature = btoa(rawCheck).substr(0, 15);
+                if (parts.length === 2) stringToHash = currentDeviceID + expiryTimestamp + SECRET_SALT;
+                else if (parts.length === 3) stringToHash = parts[2] + expiryTimestamp + SECRET_SALT;
+                else throw new Error("Format Key Sai");
 
-                    if (signature === expectedSignature) return validateTime(expiryTimestamp, userKey);
+                let generatedSignature = btoa(stringToHash).substr(0, 15);
+                
+                // NẾU SAI -> GỌI HÀM HIỆN BẢNG LỖI
+                if (signatureInKey !== generatedSignature) {
+                    let msg = `[ID MÁY CỦA BẠN]:\n${currentDeviceID}\n\n`;
+                    msg += `[KEY NÀY DÀNH CHO]:\n${parts.length === 3 ? parts[2] : "Một ID Khác"}\n\n`;
+                    msg += `⚠️ NGUYÊN NHÂN:\n- Bạn đã nhập sai ID vào Tool Admin.\n- Key này không phải của máy này.`;
+                    showErrorModal(msg);
+                    return;
                 }
+                
+                let now = new Date().getTime();
+                if (now > expiryTimestamp) { showPopup(false, "Key Đã Hết Hạn!"); return; }
 
-                if (parts.length === 3) {
-                    let expiryTimestamp = parseInt(parts[0]);
-                    let signature = parts[1];
-                    let keyID = parts[2];
-                    let rawCheck = keyID + expiryTimestamp + SECRET_SALT;
-                    let expectedSignature = btoa(rawCheck).substr(0, 15);
-
-                    if (signature === expectedSignature) return validateTime(expiryTimestamp, userKey);
-                }
-
-                showPopup(false, "Key Không Đúng Hoặc Sai Máy!");
-                setTimeout(hidePopup, 2000);
-
-            } catch (e) {
-                showPopup(false, "Lỗi Định Dạng Key");
-                setTimeout(hidePopup, 2000);
+                showPopup(true, "Kích Hoạt Thành Công!");
+                localStorage.setItem('savedKey_Android', userKey);
+                setTimeout(() => { hidePopup(); showContent(expiryTimestamp); }, 1500);
+            } catch (e) { 
+                showErrorModal("Lỗi định dạng Key!\nVui lòng copy lại chính xác toàn bộ mã Key."); 
             }
         }
 
         function validateTime(expiryTimestamp, userKey) {
             let now = new Date().getTime();
-            if (now > expiryTimestamp) {
-                showPopup(false, "Key Đã Hết Hạn Sử Dụng");
-                setTimeout(hidePopup, 2000);
-            } else {
-                showPopup(true, "Kích Hoạt Thành Công!");
-                localStorage.setItem('savedKey_Android', userKey);
-                setTimeout(() => { hidePopup(); showContent(expiryTimestamp); }, 1500);
-            }
+            if (now > expiryTimestamp) { showPopup(false, "Key Đã Hết Hạn Sử Dụng"); setTimeout(hidePopup, 2000); }
+            else { showPopup(true, "Kích Hoạt Thành Công!"); localStorage.setItem('savedKey_Android', userKey); setTimeout(() => { hidePopup(); showContent(expiryTimestamp); }, 1500); }
         }
 
         function showContent(expiryTimestamp) {
@@ -201,7 +233,6 @@
             document.getElementById('contentBox').classList.remove('hidden');
             let dateObj = new Date(expiryTimestamp);
             document.getElementById('expiryDateShow').innerText = dateObj.getDate() + "/" + (dateObj.getMonth()+1) + " " + dateObj.getHours() + ":" + dateObj.getMinutes();
-
             setInterval(() => {
                 let now = new Date().getTime();
                 let distance = expiryTimestamp - now;
@@ -217,41 +248,54 @@
             const statusText = document.getElementById('status_' + id);
             const switchLabel = document.getElementById('switch_' + id);
             const isOn = checkbox.checked;
-            checkbox.disabled = true;
-            switchLabel.classList.add('loading');
-
+            checkbox.disabled = true; 
             if (isOn) {
-                statusText.innerHTML = '<span class="spinner"></span> Đang bật...';
-                setTimeout(() => {
-                    statusText.innerText = '✅ Đã Bật'; statusText.style.color = '#30D158';
-                    showPopup(true, "Đã Kích Hoạt Thành Công"); setTimeout(hidePopup, 1500);
-                    checkbox.disabled = false; switchLabel.classList.remove('loading');
-                    if (navigator.vibrate) navigator.vibrate(200);
-                }, 3000);
+                switchLabel.classList.add('loading');
+                statusText.innerHTML = '<span class="spinner"></span> Đang xử lý...';
+                if (id === 1) runConsoleEffect("FIX LAG", ["Cleaning Android Cache...", "Clearing Dalvik Cache...", "Optimizing Snapdragon/Exynos...", "FPS Unlocked: 60"], checkbox, id);
+                if (id === 2) runConsoleEffect("NET BOOST", ["Pinging Google Server...", "DNS Changed: 8.8.8.8", "Reducing Packet Loss...", "Connection Stable: OK"], checkbox, id);
+                if (id === 3) runConsoleEffect("SENSITIVITY", ["Optimizing TouchScreen...", "Reducing Input Lag...", "Calibration: +80%", "Response Time: 0.1ms"], checkbox, id);
+                if (id === 4) runConsoleEffect("AIM ASSIST", ["Injecting AimModule...", "Bypassing Anti-Cheat...", "Headshot Rate: +90%", "Lock Target: Active"], checkbox, id);
             } else {
-                statusText.innerHTML = '<span class="spinner"></span> Đang tắt...';
-                setTimeout(() => {
-                    statusText.innerText = 'Đã tắt'; statusText.style.color = '#666';
-                    showPopup(false, "Đã Tắt Chức Năng"); setTimeout(hidePopup, 1000);
-                    checkbox.disabled = false; switchLabel.classList.remove('loading');
-                }, 1000);
+                setTimeout(() => { statusText.innerText = 'Đã tắt'; statusText.style.color = '#666'; checkbox.disabled = false; switchLabel.classList.remove('loading'); }, 500);
             }
+        }
+
+        function runConsoleEffect(title, lines, checkbox, id) {
+            const modal = document.getElementById('consoleModal');
+            const content = document.getElementById('consoleContent');
+            const statusText = document.getElementById('status_' + id);
+            const switchLabel = document.getElementById('switch_' + id);
+            modal.classList.add('show');
+            content.innerHTML = `<div style='color:#0A84FF; font-weight:bold; margin-bottom:10px;'>[${title}] STARTING...</div>`;
+            let i = 0;
+            let interval = setInterval(() => {
+                if (i < lines.length) { content.innerHTML += `<div class='console-line'>[+] ${lines[i]}</div>`; content.scrollTop = content.scrollHeight; i++; }
+                else {
+                    clearInterval(interval);
+                    content.innerHTML += `<div style='color:#30D158; font-weight:bold; margin-top:10px;'>[SUCCESS] ACTIVATED!</div>`;
+                    setTimeout(() => { modal.classList.remove('show'); statusText.innerText = '✅ Đã Bật (Active)'; statusText.style.color = '#30D158'; checkbox.disabled = false; switchLabel.classList.remove('loading'); showPopup(true, title + " Thành Công!"); }, 1500);
+                }
+            }, 800); 
         }
 
         function showGameModal() { document.getElementById('gameModal').classList.add('show'); }
         function closeGameModal() { document.getElementById('gameModal').classList.remove('show'); }
         
-        // --- CẬP NHẬT: LINK GAME CHUẨN ANDROID (INTENT) ---
+        function forceOpenUrl(url) {
+            let a = document.createElement('a');
+            a.href = url;
+            a.target = "_blank"; // Quan trọng: Mở tab mới để không mất App
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
         function openGame(type) {
             let intentUrl;
-            if (type === 'normal') {
-                // Free Fire Thường
-                intentUrl = "intent://#Intent;scheme=freefireth;package=com.dts.freefireth;end";
-            } else {
-                // Free Fire MAX
-                intentUrl = "intent://#Intent;scheme=freefiremax;package=com.dts.freefiremax;end";
-            }
-            window.location.href = intentUrl;
+            if (type === 'normal') intentUrl = "intent://#Intent;scheme=freefireth;package=com.dts.freefireth;end";
+            else intentUrl = "intent://#Intent;scheme=freefiremax;package=com.dts.freefiremax;end";
+            forceOpenUrl(intentUrl); 
             closeGameModal();
         }
 
@@ -259,28 +303,30 @@
         function closeLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
         function confirmLogout() { localStorage.removeItem('savedKey_Android'); location.reload(); }
 
+        // --- XỬ LÝ BẢNG BÁO LỖI ---
+        function showErrorModal(msg) {
+            document.getElementById('errorMsgContent').innerText = msg;
+            document.getElementById('errorModal').classList.add('show');
+        }
+        function closeErrorModal() {
+            document.getElementById('errorModal').classList.remove('show');
+        }
+
         function showPopup(isSuccess, msg) {
             const m = document.getElementById('statusModal');
             const i = document.getElementById('statusIcon');
             const t = document.getElementById('statusText');
             m.className = "status-popup " + (isSuccess ? "success-mode" : "error-mode");
-            i.innerHTML = isSuccess ? "✅" : "❌";
-            t.innerText = msg;
-            m.classList.add('show');
+            i.innerHTML = isSuccess ? "✅" : "❌"; t.innerText = msg; m.classList.add('show'); setTimeout(() => m.classList.remove('show'), 2000);
         }
         function hidePopup() { document.getElementById('statusModal').classList.remove('show'); }
 
         let saved = localStorage.getItem('savedKey_Android');
         if (saved) {
             let checkInterval = setInterval(() => {
-                if (currentDeviceID) {
-                    clearInterval(checkInterval);
-                    document.getElementById('inputKey').value = saved;
-                    checkKey(); 
-                }
+                if (currentDeviceID) { clearInterval(checkInterval); document.getElementById('inputKey').value = saved; checkKey(); }
             }, 100);
         }
     </script>
 </body>
 </html>
-
