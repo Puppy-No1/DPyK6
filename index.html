@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>𝐃𝐏𝐲𝐊𝟔 🧸 𝐕𝐈𝐏</title>
+    <title>DPyK6 🧸 (Android)</title>
     <style>
         /* GIỮ NGUYÊN GIAO DIỆN CŨ */
         body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center; overflow: hidden; }
@@ -130,7 +130,10 @@
             const data = [navigator.platform, navigator.hardwareConcurrency, screen.height, screen.width, screen.colorDepth, Intl.DateTimeFormat().resolvedOptions().timeZone].join("-");
             const msgBuffer = new TextEncoder().encode(data);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            return "IOS-" + Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 8).toUpperCase();
+            let hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            // --- ĐỔI PREFIX THÀNH ADR (ANDROID) ---
+            return "ADR-" + hashHex.substring(0, 8).toUpperCase();
         }
 
         let currentDeviceID = "";
@@ -145,7 +148,6 @@
             setTimeout(hidePopup, 1000);
         }
 
-        // --- KIỂM TRA KEY ---
         function checkKey() {
             let userKey = document.getElementById('inputKey').value.trim();
             if(!userKey) return;
@@ -189,7 +191,7 @@
                 setTimeout(hidePopup, 2000);
             } else {
                 showPopup(true, "Kích Hoạt Thành Công!");
-                localStorage.setItem('savedKey_V7', userKey);
+                localStorage.setItem('savedKey_Android', userKey);
                 setTimeout(() => { hidePopup(); showContent(expiryTimestamp); }, 1500);
             }
         }
@@ -203,7 +205,7 @@
             setInterval(() => {
                 let now = new Date().getTime();
                 let distance = expiryTimestamp - now;
-                if (distance < 0) { confirmLogout(); return; } // Hết giờ tự đăng xuất
+                if (distance < 0) { confirmLogout(); return; }
                 let h = Math.floor(distance / (1000 * 60 * 60));
                 let m = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
                 let s = Math.floor((distance % (1000 * 60)) / 1000);
@@ -236,28 +238,26 @@
             }
         }
 
-        // --- XỬ LÝ MỞ GAME (ĐÃ SỬA: KHÔNG QUA APPSTORE) ---
         function showGameModal() { document.getElementById('gameModal').classList.add('show'); }
         function closeGameModal() { document.getElementById('gameModal').classList.remove('show'); }
         
+        // --- CẬP NHẬT: LINK GAME CHUẨN ANDROID (INTENT) ---
         function openGame(type) {
-            let url = type === 'normal' ? "freefireth://" : "freefiremax://";
-            // Chỉ mở App Scheme, không redirect sang Store nữa
-            window.location.href = url;
+            let intentUrl;
+            if (type === 'normal') {
+                // Free Fire Thường
+                intentUrl = "intent://#Intent;scheme=freefireth;package=com.dts.freefireth;end";
+            } else {
+                // Free Fire MAX
+                intentUrl = "intent://#Intent;scheme=freefiremax;package=com.dts.freefiremax;end";
+            }
+            window.location.href = intentUrl;
             closeGameModal();
         }
 
-        // --- XỬ LÝ ĐĂNG XUẤT (CÓ BẢNG CẢNH BÁO) ---
-        function showLogoutModal() {
-            document.getElementById('logoutModal').classList.add('show');
-        }
-        function closeLogoutModal() {
-            document.getElementById('logoutModal').classList.remove('show');
-        }
-        function confirmLogout() {
-            localStorage.removeItem('savedKey_V7');
-            location.reload();
-        }
+        function showLogoutModal() { document.getElementById('logoutModal').classList.add('show'); }
+        function closeLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
+        function confirmLogout() { localStorage.removeItem('savedKey_Android'); location.reload(); }
 
         function showPopup(isSuccess, msg) {
             const m = document.getElementById('statusModal');
@@ -270,7 +270,7 @@
         }
         function hidePopup() { document.getElementById('statusModal').classList.remove('show'); }
 
-        let saved = localStorage.getItem('savedKey_V7');
+        let saved = localStorage.getItem('savedKey_Android');
         if (saved) {
             let checkInterval = setInterval(() => {
                 if (currentDeviceID) {
