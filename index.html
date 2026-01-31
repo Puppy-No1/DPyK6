@@ -254,7 +254,7 @@
                 if (id === 1) runConsoleEffect("FIX LAG", ["Cleaning Android Cache...", "Clearing Dalvik Cache...", "Optimizing Snapdragon/Exynos...", "FPS Unlocked: 90/120"], checkbox, id);
                 if (id === 2) runConsoleEffect("NET BOOST", ["Pinging Google Server...", "DNS Changed: 8.8.8.8", "Reducing Packet Loss...", "Connection Stable: OK"], checkbox, id);
                 if (id === 3) runConsoleEffect("SENSITIVITY", ["Optimizing TouchScreen...", "Reducing Input Lag...", "Calibration: +80%", "Response Time: 0.1ms"], checkbox, id);
-                if (id === 4) runConsoleEffect("AIM ASSIST", ["Injecting AimModule...", "Bypassing Anti-Cheat...", "Headshot Rate: +90%", "Lock Target: Active"], checkbox, id);
+                if (id === 4) runConsoleEffect("AIM ASSIST", ["Injecting AimModule...", "Bypassing Anti-Cheat...", "Headshot Rate: +95%", "Lock Target: Active"], checkbox, id);
             } else {
                 setTimeout(() => { statusText.innerText = 'Đã tắt'; statusText.style.color = '#666'; checkbox.disabled = false; switchLabel.classList.remove('loading'); }, 500);
             }
@@ -281,25 +281,16 @@
         function showGameModal() { document.getElementById('gameModal').classList.add('show'); }
         function closeGameModal() { document.getElementById('gameModal').classList.remove('show'); }
         
-        // --- HÀM MỞ LINK AN TOÀN (TRÁNH LỖI TRẮNG APP) ---
-        function forceOpenUrl(url) {
-            let a = document.createElement('a');
-            a.href = url;
-            a.target = "_blank"; // Mở tab mới
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        // --- SỬA LẠI LINK MỞ GAME (TRỰC TIẾP) ---
+        // --- XỬ LÝ MỞ GAME TRỰC TIẾP (FIX CHUYỂN STORE) ---
         function openGame(type) {
-            let intentUrl;
+            let url = "";
             if (type === 'normal') {
-                intentUrl = "freefireth://";
+                url = "freefireth://";
             } else {
-                intentUrl = "freefiremax://";
+                url = "freefiremax://";
             }
-            forceOpenUrl(intentUrl); 
+            // Mở trực tiếp bằng location, KHÔNG mở tab mới
+            window.location.href = url;
             closeGameModal();
         }
 
