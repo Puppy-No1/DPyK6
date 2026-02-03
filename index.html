@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DPyK6 🤖</title>
     <style>
-        /* --- GIAO DIỆN CHÍNH --- */
+        /* --- GIAO DIỆN (GIỮ NGUYÊN) --- */
         body { margin: 0; padding: 0; background-color: #000; color: #fff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; height: 100vh; display: flex; justify-content: center; align-items: center; background-image: url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2070&auto=format&fit=crop'); background-size: cover; background-position: center; overflow: hidden; }
         .overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); backdrop-filter:blur(15px); z-index:1; }
         .card { position: relative; z-index: 2; width: 85%; max-width: 380px; background: rgba(30,30,30,0.95); border-radius: 20px; padding: 30px; text-align: center; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 50px rgba(0,0,0,0.8); animation: fadeIn 0.5s ease; max-height: 90vh; overflow-y: auto; }
@@ -23,10 +23,8 @@
         .btn:active { transform: scale(0.97); }
         .btn-primary { background: linear-gradient(135deg, #0A84FF, #5E5CE6); color: white; }
         .btn-secondary { background: rgba(255,255,255,0.1); color: #ccc; }
-        /* Tùy chỉnh nút Zalo để con trỏ chuột không hiển thị dạng click được */
         .btn-static { background: rgba(255,255,255,0.1); color: #ccc; cursor: default; } 
-        
-        /* Đã xóa style btn-link4m vì không dùng nữa */
+        .btn-link4m { background: #fff; color: #000; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; }
         
         .func-list { display: flex; flex-direction: column; gap: 15px; margin: 20px 0; }
         .func-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.05); padding: 15px; border-radius: 15px; border: 1px solid rgba(255,255,255,0.1); }
@@ -48,7 +46,7 @@
         .status-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: rgba(20, 20, 20, 0.98); padding: 25px 40px; border-radius: 15px; z-index: 9999; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.9); opacity: 0; visibility: hidden; transition: 0.3s; min-width: 280px; border: 1px solid rgba(255,255,255,0.1); }
         .status-popup.show { opacity: 1; visibility: visible; transform: translate(-50%, -50%) scale(1); }
         .status-icon { font-size: 40px; margin-bottom: 10px; display: block; }
-        .status-text { font-size: 16px; font-weight: bold; display: block; white-space: pre-line; /* Hỗ trợ xuống dòng */ }
+        .status-text { font-size: 16px; font-weight: bold; display: block; }
         .success-mode { border-color: #30D158; } .success-mode .status-icon, .success-mode .status-text { color: #30D158; }
         .error-mode { border-color: #FF453A; } .error-mode .status-icon, .error-mode .status-text { color: #FF453A; }
         
@@ -83,6 +81,10 @@
     <div class="card" id="loginBox">
         <h2 style="color:#fff; margin-top:0;">Nhập Key Để Sử Dụng ❗️</h2>
         
+        <button onclick="openLink4M()" class="btn btn-link4m">
+            🔑 <b>Lấy Key Miễn Phí</b>
+        </button>
+
         <p style="color:#aaa; font-size:13px; margin-bottom:5px;">Sao Chép Mã Bên Dưới Gửi Cho 𝐏𝐲𝐊𝟔 🧸 Để Nhận Key VIP:</p>
 
         <div class="device-box" onclick="copyDeviceID()">
@@ -93,7 +95,7 @@
         <input type="text" id="inputKey" placeholder="Dán Key Vào Đây Để Kích Hoạt...">
         <button class="btn btn-primary" onclick="checkKey()">KÍCH HOẠT NGAY</button>
         
-        <button class="btn btn-static">💬 Liên Hệ Zalo Để Lấy Key VIP: 0901323149</button>
+        <button class="btn btn-static">💬 Liên Hệ Zalo: 0901323149</button>
     </div>
 
     <div class="card hidden" id="contentBox">
@@ -125,8 +127,7 @@
             </div>
         </div>
 
-        <button class="btn btn-game" onclick="activateGame()">🚀 KÍCH HOẠT</button>
-        
+        <button class="btn btn-game" onclick="showGameModal()">🎮 MỞ GAME FREE FIRE</button>
         <button class="btn btn-secondary" onclick="showLogoutModal()" style="margin-top:10px;">Đăng Xuất</button>
     </div>
 
@@ -155,8 +156,7 @@
     <div class="modal" id="errorModal">
         <div class="modal-content">
             <span class="error-title">❌ KEY SAI!</span>
-            <div class="error-msg" id="errorMsgContent">
-                </div>
+            <div class="error-msg" id="errorMsgContent"></div>
             <button class="btn btn-secondary" onclick="closeErrorModal()" style="margin-top:15px; background: rgba(255, 69, 58, 0.2); color: #FF453A;">Đóng</button>
         </div>
     </div>
@@ -164,11 +164,33 @@
     <script>
         const SECRET_SALT = "HEADLOCK_VIP_2025_HARDWARE"; 
 
+        // --- CƠ CHẾ LẤY ID CỐ ĐỊNH (FIXED ID) ---
         async function getStableDeviceID() {
-            const data = [navigator.platform, navigator.hardwareConcurrency, screen.height, screen.width, screen.colorDepth, Intl.DateTimeFormat().resolvedOptions().timeZone].join("-");
+            // Bước 1: Kiểm tra xem đã có ID trong bộ nhớ chưa
+            let storedID = localStorage.getItem('DPYK6_FIXED_ID_V3');
+            
+            if (storedID) {
+                // Nếu có rồi thì dùng luôn, KHÔNG TẠO LẠI -> Đảm bảo ID không đổi
+                return storedID;
+            }
+
+            // Bước 2: Nếu chưa có, tạo ID mới và Lưu Lại Vĩnh Viễn
+            const data = [
+                navigator.userAgent, 
+                Math.random(), // Thêm ngẫu nhiên
+                new Date().getTime() // Thêm thời gian
+            ].join("-");
+
             const msgBuffer = new TextEncoder().encode(data);
             const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-            return "ADR-" + Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('').substring(0, 8).toUpperCase();
+            let hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('');
+            
+            let newID = "ADR-" + hashHex.substring(0, 8).toUpperCase();
+
+            // Lưu vào bộ nhớ máy
+            localStorage.setItem('DPYK6_FIXED_ID_V3', newID);
+            
+            return newID;
         }
 
         let currentDeviceID = "";
@@ -183,7 +205,7 @@
             setTimeout(hidePopup, 1000);
         }
 
-        // --- CHECK KEY (HIỆN BẢNG BÁO LỖI) ---
+        // --- CHECK KEY ---
         function checkKey() {
             let userKey = document.getElementById('inputKey').value.trim();
             if(!userKey) return showPopup(false, "Vui Lòng Nhập Key!");
@@ -199,8 +221,6 @@
                 else throw new Error("Format Key Sai");
 
                 let generatedSignature = btoa(stringToHash).substr(0, 15);
-                
-                // NẾU SAI -> GỌI HÀM HIỆN BẢNG LỖI
                 if (signatureInKey !== generatedSignature) {
                     let msg = `[ID MÁY CỦA BẠN]:\n${currentDeviceID}\n\n`;
                     msg += `[KEY NÀY DÀNH CHO]:\n${parts.length === 3 ? parts[2] : "Một ID Khác"}\n\n`;
@@ -208,7 +228,6 @@
                     showErrorModal(msg);
                     return;
                 }
-                
                 let now = new Date().getTime();
                 if (now > expiryTimestamp) { showPopup(false, "Key Đã Hết Hạn!"); return; }
 
@@ -250,10 +269,10 @@
             if (isOn) {
                 switchLabel.classList.add('loading');
                 statusText.innerHTML = '<span class="spinner"></span> Đang xử lý...';
-                if (id === 1) runConsoleEffect("FIX LAG", ["Cleaning Android Cache...", "Clearing Dalvik Cache...", "Optimizing Snapdragon/Exynos...", "FPS Unlocked: 60"], checkbox, id);
+                if (id === 1) runConsoleEffect("FIX LAG", ["Cleaning Android Cache...", "Clearing Dalvik Cache...", "Optimizing Snapdragon/Exynos...", "FPS Unlocked: 90/120"], checkbox, id);
                 if (id === 2) runConsoleEffect("NET BOOST", ["Pinging Google Server...", "DNS Changed: 8.8.8.8", "Reducing Packet Loss...", "Connection Stable: OK"], checkbox, id);
                 if (id === 3) runConsoleEffect("SENSITIVITY", ["Optimizing TouchScreen...", "Reducing Input Lag...", "Calibration: +80%", "Response Time: 0.1ms"], checkbox, id);
-                if (id === 4) runConsoleEffect("AIM ASSIST", ["Injecting AimModule...", "Bypassing Anti-Cheat...", "Headshot Rate: +90%", "Lock Target: Active"], checkbox, id);
+                if (id === 4) runConsoleEffect("AIM ASSIST", ["Injecting AimModule...", "Bypassing Anti-Cheat...", "Headshot Rate: +95%", "Lock Target: Active"], checkbox, id);
             } else {
                 setTimeout(() => { statusText.innerText = 'Đã tắt'; statusText.style.color = '#666'; checkbox.disabled = false; switchLabel.classList.remove('loading'); }, 500);
             }
@@ -277,30 +296,24 @@
             }, 800); 
         }
 
-        // --- HÀM MỚI: KÍCH HOẠT GAME ---
-        function activateGame() {
-            showPopup(true, "Đã kích hoạt thành công\nHãy thoát ra vào game");
-            // Popup này sẽ tự tắt sau 2 giây do code trong showPopup đã có sẵn setTimeout
-        }
-
-        // Các hàm cũ vẫn giữ để không lỗi code nhưng không gọi tới
         function showGameModal() { document.getElementById('gameModal').classList.add('show'); }
         function closeGameModal() { document.getElementById('gameModal').classList.remove('show'); }
         
-        function forceOpenUrl(url) {
-            let a = document.createElement('a');
-            a.href = url;
-            a.target = "_blank"; 
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
+        // --- HÀM MỞ LINK4M: MỞ RA TRÌNH DUYỆT ---
+        function openLink4M() {
+            // _system sẽ ép Android mở Chrome/Trình duyệt ngoài
+            window.open("https://link4m.com/Lhg88M", "_system");
         }
 
+        // --- HÀM MỞ GAME: CHUẨN LAUNCHER INTENT ---
         function openGame(type) {
             let intentUrl;
-            if (type === 'normal') intentUrl = "intent://#Intent;scheme=freefireth;package=com.dts.freefireth;end";
-            else intentUrl = "intent://#Intent;scheme=freefiremax;package=com.dts.freefiremax;end";
-            forceOpenUrl(intentUrl); 
+            if (type === 'normal') {
+                intentUrl = "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;component=com.dts.freefireth/com.dts.freefireth.FreeFire;end";
+            } else {
+                intentUrl = "intent://#Intent;action=android.intent.action.MAIN;category=android.intent.category.LAUNCHER;component=com.dts.freefiremax/com.dts.freefiremax.FreeFire;end";
+            }
+            window.location.href = intentUrl;
             closeGameModal();
         }
 
@@ -308,23 +321,18 @@
         function closeLogoutModal() { document.getElementById('logoutModal').classList.remove('show'); }
         function confirmLogout() { localStorage.removeItem('savedKey_Android'); location.reload(); }
 
-        // --- XỬ LÝ BẢNG BÁO LỖI ---
         function showErrorModal(msg) {
             document.getElementById('errorMsgContent').innerText = msg;
             document.getElementById('errorModal').classList.add('show');
         }
-        function closeErrorModal() {
-            document.getElementById('errorModal').classList.remove('show');
-        }
+        function closeErrorModal() { document.getElementById('errorModal').classList.remove('show'); }
 
         function showPopup(isSuccess, msg) {
             const m = document.getElementById('statusModal');
             const i = document.getElementById('statusIcon');
             const t = document.getElementById('statusText');
             m.className = "status-popup " + (isSuccess ? "success-mode" : "error-mode");
-            i.innerHTML = isSuccess ? "✅" : "❌"; t.innerText = msg; m.classList.add('show'); 
-            // Tự tắt sau 2000ms (2 giây)
-            setTimeout(() => m.classList.remove('show'), 2000);
+            i.innerHTML = isSuccess ? "✅" : "❌"; t.innerText = msg; m.classList.add('show'); setTimeout(() => m.classList.remove('show'), 2000);
         }
         function hidePopup() { document.getElementById('statusModal').classList.remove('show'); }
 
